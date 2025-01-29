@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>LCM Summary</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">LCM Summary</h1>
+
+        <!-- Search Form -->
+        <form method="get" class="mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <input type="date" name="date" class="form-control" placeholder="Date" value="{{ request.GET.date }}">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="vehicle_no" class="form-control" placeholder="Vehicle No" value="{{ request.GET.vehicle_no }}">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="location" class="form-control" placeholder="Location" value="{{ request.GET.location }}">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="lcm_no" class="form-control" placeholder="LCM No" value="{{ request.GET.lcm_no }}">
+                </div>
+            </div>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Search</button>
+                <a href="{% url 'lcm_summary' %}" class="btn btn-secondary">Reset</a>
+            </div>
+        </form>
+
+        <!-- Grouped Data Table -->
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Vehicle No</th>
+                    <th>Location</th>
+                    <th>Total Count</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for group in grouped_data %}
+                <tr>
+                    <td>{{ group.date|date:'d-m-Y' }}</td>
+                    <td>{{ group.lcm_no }}</td>
+                    <td>{{ group.vehicle_no }}</td>
+                    <td>{{ group.location }}</td>
+                    <td>{{ group.total_count }}</td>
+                    <td>
+                <a href="{% url 'lcm_details' group.date group.vehicle_no group.location group.lcm_no %}" class="btn btn-success btn-sm">
+                    View Details
+                </a>
+            </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Detailed Data -->
+
+    </div>
+</body>
+</html>

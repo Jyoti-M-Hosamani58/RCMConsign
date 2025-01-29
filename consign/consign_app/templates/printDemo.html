@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcel Service Lorry Receipt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            page-break-after: always;
+        }
+        .copy {
+            border: 1px solid #000;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .header {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+        .footer {
+            font-size: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Parcel Service Lorry Receipt</h1>
+
+    <div class="container">
+        <!-- Generate two copies: Consignor Copy and Consignee Copy -->
+        {% for copy_type in ["Consignor Copy", "Consignee Copy"] %}
+        <div class="copy">
+            <div class="header">{{ copy_type }}</div>
+            <table>
+                <tr>
+                    <th>Track ID</th>
+                    <td>{{ consignment.track_id }}</td>
+                </tr>
+                <tr>
+                    <th>Sender Name</th>
+                    <td>{{ consignment.sender_name }}</td>
+                </tr>
+                <tr>
+                    <th>Sender Mobile</th>
+                    <td>{{ consignment.sender_mobile }}</td>
+                </tr>
+                <tr>
+                    <th>Sender Email</th>
+                    <td>{{ consignment.sender_email }}</td>
+                </tr>
+                <tr>
+                    <th>Sender Address</th>
+                    <td>{{ consignment.sender_address }}</td>
+                </tr>
+                <tr>
+                    <th>Receiver Name</th>
+                    <td>{{ consignment.receiver_name }}</td>
+                </tr>
+                <tr>
+                    <th>Receiver Mobile</th>
+                    <td>{{ consignment.receiver_mobile }}</td>
+                </tr>
+                <tr>
+                    <th>Receiver Email</th>
+                    <td>{{ consignment.receiver_email }}</td>
+                </tr>
+                <tr>
+                    <th>Receiver Address</th>
+                    <td>{{ consignment.receiver_address }}</td>
+                </tr>
+                <tr>
+                    <th>Weight</th>
+                    <td>{{ consignment.weight }} kg</td>
+                </tr>
+                <tr>
+                    <th>Total Cost</th>
+                    <td>₹{{ consignment.total_cost }}</td>
+                </tr>
+                <tr>
+                    <th>Freight</th>
+                    <td>₹{{ consignment.freight }}</td>
+                </tr>
+                <tr>
+                    <th>Hamali</th>
+                    <td>₹{{ consignment.hamali }}</td>
+                </tr>
+                <tr>
+                    <th>Delivery Charge</th>
+                    <td>₹{{ consignment.delivery_charge }}</td>
+                </tr>
+                <tr>
+                    <th>GST Charge</th>
+                    <td>₹{{ consignment.gstcharge }}</td>
+                </tr>
+                <tr>
+                    <th>Route From</th>
+                    <td>{{ consignment.route_from }}</td>
+                </tr>
+                <tr>
+                    <th>Route To</th>
+                    <td>{{ consignment.route_to }}</td>
+                </tr>
+                <tr>
+                    <th>Invoice No</th>
+                    <td>{{ consignment.invoiceNo }}</td>
+                </tr>
+                <tr>
+                    <th>Invoice Value</th>
+                    <td>{{ consignment.invoicevalue }}</td>
+                </tr>
+                <tr>
+                    <th>Pieces</th>
+                    <td>{{ consignment.pieces }}</td>
+                </tr>
+                <tr>
+                    <th>Remarks</th>
+                    <td>{{ consignment.prodDesc }}</td>
+                </tr>
+            </table>
+            <div class="footer">
+                This is a computer-generated receipt. No signature required.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

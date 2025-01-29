@@ -1,0 +1,549 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>Ratan Cargo Movers</title>
+    <meta
+            content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+            name="viewport"
+    />
+    <link
+            rel="icon"
+            href="{% static 'assets/img/kaiadmin/favicon.ico' %}"
+            type="image/x-icon"
+    />
+
+    <!-- Fonts and icons -->
+    <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
+    <script>
+        WebFont.load({
+          google: { families: ["Public Sans:300,400,500,600,700"] },
+          custom: {
+            families: [
+              "Font Awesome 5 Solid",
+              "Font Awesome 5 Regular",
+              "Font Awesome 5 Brands",
+              "simple-line-icons",
+            ],
+            urls: ["{% static 'assets/css/fonts.min.css' %}"],
+          },
+          active: function () {
+            sessionStorage.fonts = true;
+          },
+        });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/plugins.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/kaiadmin.min.css' %}"/>
+
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link rel="stylesheet" href="{% static 'assets/css/demo.css' %}"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+<body>
+<!-- End Sidebar -->
+{% include 'index_menu.html' %}
+<!-- End Navbar -->
+</div><br/> <br/> <br/> <br/>
+<form method="POST" id="rateForm" action="{% url 'corporatePickRate' %}">
+    {% csrf_token %}
+    <div class="container">
+        <div class="page-inner">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">PickUp Rate Chart</div>
+                        </div>
+                        <div class="row">
+                            <!-- Consignor Name and Consignor Address in one row -->
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <input type="text" id="senderName" name="senderName" placeholder="Client"
+                                           list="consignor_name" oninput="showClientDatalist()"
+                                           onchange="fetchClientDetails()" class="form-control">
+                                    <datalist id="consignor_name"></datalist>
+                                    <input type="hidden" id="senderID" name="senderID" placeholder="Enter Sender ID">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <input type="text" id="pick" name="pick"
+                                           placeholder="pickUp Place" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <input type="text" id="pickrate" name="pickrate"
+                                           placeholder="PickUp Rate" class="form-control">
+                                </div>
+                            </div>
+                            <div class="card-action">
+                    <button class="btn btn-success">Submit</button>
+                </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<form method="POST" id="DrateForm" action="{% url 'corporateDelRate' %}">
+    {% csrf_token %}
+    <div class="container">
+        <div class="page-inner">
+
+            <div class="row">
+                <div class="col-md-16">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Delivery Rate Chart</div>
+                        </div>
+                        <div class="row">
+                            <!-- Consignor Name and Consignor Address in one row -->
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <input type="text" id="DsenderName" name="DsenderName" placeholder="Client"
+                                           list="Dconsignor_name" oninput="DshowClientDatalist()"
+                                           onchange="DfetchClientDetails()" class="form-control">
+                                    <datalist id="Dconsignor_name"></datalist>
+                                    <input type="hidden" id="DsenderID" name="DsenderID" placeholder="Enter Sender ID">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <input type="text" id="del" name="del"
+                                           placeholder="Delivery Place" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <input type="text" id="delrate" name="delrate"
+                                           placeholder="Delivery Rate" class="form-control">
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-action">
+                    <button class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    <!-- Pickup Rates Section -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Existing Pickup Rates</div>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Pick Up</th>
+                        <th>Rate</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for r in pickrate_data %}
+                    <tr>
+                        <td>{{ r.clientName }}</td>
+                        <td>{{ r.pickPlace }}</td>
+                        <td>{{ r.pickrate }}</td>
+                        <td>
+                            <!-- Button to trigger pickup edit modal -->
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#pickupEditModal{{ r.id }}">Edit
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Pickup Edit Modal -->
+                    <div class="modal fade" id="pickupEditModal{{ r.id }}" tabindex="-1"
+                         aria-labelledby="pickupEditModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="pickupEditModalLabel">Edit Pickup Rate</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="pickupEditForm{{ r.id }}" data-url="{% url 'edit_pickup_rate_corporate' r.id %}">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label for="clientName" class="form-label">Pickup Place</label>
+                                            <input type="text" class="form-control" name="clientName"
+                                                   value="{{ r.clientName }}" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="pickupPlace" class="form-label">Pickup Place</label>
+                                            <input type="text" class="form-control" name="pickupPlace"
+                                                   value="{{ r.pickPlace }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="pickupRate" class="form-label">Rate</label>
+                                            <input type="text" class="form-control" name="pickupRate"
+                                                   value="{{ r.pickrate }}">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add a similar modal for deliveryEditModal -->
+
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delivery Rates Section -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Existing Delivery Rates</div>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Pick Up</th>
+                        <th>Rate</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for r in delrate_data %}
+                    <tr>
+                        <td>{{ r.clientName }}</td>
+                        <td>{{ r.delPlace }}</td>
+                        <td>{{ r.delrate }}</td>
+                        <td>
+                            <!-- Button to trigger delivery edit modal -->
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#deliveryEditModal{{ r.id }}">Edit
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Delivery Edit Modal -->
+                    <div class="modal fade" id="deliveryEditModal{{ r.id }}" tabindex="-1"
+                         aria-labelledby="deliveryEditModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deliveryEditModalLabel">Edit Delivery Rate</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="deliveryEditForm{{ r.id }}"
+                                          data-url="{% url 'edit_delivery_rate_corporate' r.id %}">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label for="DclientName" class="form-label">Delivery Place</label>
+                                            <input type="text" class="form-control" name="DclientName"
+                                                   value="{{ r.delPlace }}" readonly>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="deliveryPlace" class="form-label">Delivery Place</label>
+                                            <input type="text" class="form-control" name="deliveryPlace"
+                                                   value="{{ r.delPlace }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="deliveryRate" class="form-label">Rate</label>
+                                            <input type="text" class="form-control" name="deliveryRate"
+                                                   value="{{ r.delrate }}">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Custom template -->
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("pick-del-rate-form");
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Collect form data
+            const formData = new FormData(form);
+
+            // Send POST request to the server
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            // Display messages as a popup alert
+            if (!result.success) {
+                alert(result.message); // Show error messages
+            } else {
+                alert(result.message); // Show success message
+                form.reset(); // Optionally reset the form on success
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle form submission for all pickup edit forms
+        document.querySelectorAll('form[id^="pickupEditForm"]').forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent default form submission
+                const url = form.getAttribute('data-url');
+                const formData = new FormData(form);
+
+                // Send AJAX request
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message); // Show success message
+                    } else {
+                        alert('Error: ' + data.message); // Show error message
+                    }
+                    // Optionally reload the page or update the table dynamically
+                    location.reload();
+                })
+                .catch(error => {
+                    alert('An error occurred. Please try again.');
+                    console.error(error);
+                });
+            });
+        });
+
+        // Add similar logic for delivery edit forms
+        document.querySelectorAll('form[id^="deliveryEditForm"]').forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const url = form.getAttribute('data-url');
+                const formData = new FormData(form);
+
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                    location.reload();
+                })
+                .catch(error => {
+                    alert('An error occurred. Please try again.');
+                    console.error(error);
+                });
+            });
+        });
+    });
+</script>
+<script>
+    function showClientDatalist() {
+        const input = document.getElementById('senderName');
+        const datalist = document.getElementById('consignor_name');
+
+        if (input.value.length >= 2) {
+            fetch(`/get_client_name?query=${encodeURIComponent(input.value)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Fetched data:', data); // Debugging: Check the data in the console
+                    datalist.innerHTML = ''; // Clear previous options
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(number => {
+                            const option = document.createElement('option');
+                            option.value = number;
+                            datalist.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = 'No results';
+                        datalist.appendChild(option);
+                    }
+                })
+                .catch(error => console.error('Error fetching vehicle numbers:', error));
+        } else {
+            datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+        }
+    }
+    function fetchClientDetails() {
+    const senderName = document.getElementById('senderName').value;
+
+    if (senderName) {
+        fetch(`/get_client_details?name=${encodeURIComponent(senderName)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched client details:', data); // Debugging
+
+                // Populate the form fields with the fetched data
+                document.getElementById('senderID').value = data.tbbId || '';
+                document.getElementById('senderFOC').value = data.foc || '';
+                document.getElementById('senderAddress').value = data.address || '';
+                document.getElementById('senderMobile').value = data.mobile || '';
+                document.getElementById('senderEmail').value = data.email || '';
+                document.getElementById('sendergst').value = data.GST || '';
+                document.getElementById('senderclienttype').value = data.clientType || '';
+                document.getElementById('senderThirdParty').value = data.thirdParty || '';
+
+                fetchSenderPickup(data.tbbId);
+
+            })
+            .catch(error => console.error('Error fetching client details:', error));
+    }
+}
+
+</script>
+
+<script>
+    function DshowClientDatalist() {
+        const input = document.getElementById('DsenderName');
+        const datalist = document.getElementById('Dconsignor_name');
+
+        if (input.value.length >= 2) {
+            fetch(`/get_client_name?query=${encodeURIComponent(input.value)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Fetched data:', data); // Debugging: Check the data in the console
+                    datalist.innerHTML = ''; // Clear previous options
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(number => {
+                            const option = document.createElement('option');
+                            option.value = number;
+                            datalist.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = 'No results';
+                        datalist.appendChild(option);
+                    }
+                })
+                .catch(error => console.error('Error fetching vehicle numbers:', error));
+        } else {
+            datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+        }
+    }
+    function DfetchClientDetails() {
+    const senderName = document.getElementById('DsenderName').value;
+
+    if (senderName) {
+        fetch(`/get_client_details?name=${encodeURIComponent(senderName)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched client details:', data); // Debugging
+
+                // Populate the form fields with the fetched data
+                document.getElementById('DsenderID').value = data.tbbId || '';
+                document.getElementById('senderFOC').value = data.foc || '';
+                document.getElementById('senderAddress').value = data.address || '';
+                document.getElementById('senderMobile').value = data.mobile || '';
+                document.getElementById('senderEmail').value = data.email || '';
+                document.getElementById('sendergst').value = data.GST || '';
+                document.getElementById('senderclienttype').value = data.clientType || '';
+                document.getElementById('senderThirdParty').value = data.thirdParty || '';
+
+                fetchSenderPickup(data.tbbId);
+
+            })
+            .catch(error => console.error('Error fetching client details:', error));
+    }
+}
+
+</script>
+
+
+<!--   Core JS Files   -->
+<script src="{% static 'assets/js/core/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'assets/js/core/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
+
+<!-- jQuery Scrollbar -->
+<script src="{% static 'assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
+
+<!-- Chart JS -->
+<script src="{% static 'assets/js/plugin/chart.js/chart.min.js' %}"></script>
+
+<!-- jQuery Sparkline -->
+<script src="{% static 'assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js' %}"></script>
+
+<!-- Chart Circle -->
+<script src="{% static 'assets/js/plugin/chart-circle/circles.min.js' %}"></script>
+
+<!-- Datatables -->
+<script src="{% static 'assets/js/plugin/datatables/datatables.min.js' %}"></script>
+
+<!-- Bootstrap Notify -->
+<script src="{% static 'assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js' %}"></script>
+
+<!-- jQuery Vector Maps -->
+<script src="{% static 'assets/js/plugin/jsvectormap/jsvectormap.min.js' %}"></script>
+<script src="{% static 'assets/js/plugin/jsvectormap/world.js' %}"></script>
+
+<!-- Google Maps Plugin -->
+<script src="{% static 'assets/js/plugin/gmaps/gmaps.js' %}"></script>
+
+<!-- Sweet Alert -->
+<script src="{% static 'assets/js/plugin/sweetalert/sweetalert.min.js' %}"></script>
+
+<!-- Kaiadmin JS -->
+<script src="{% static 'assets/js/kaiadmin.min.js' %}"></script>
+
+<!-- Kaiadmin DEMO methods, don't include it in your project! -->
+<script src="{% static 'assets/js/setting-demo2.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 0;
+            padding: 0;
+        }
+@media print {
+            .btn-print, .btn-download, .btn-back {
+                display: none; /* Hide print/download buttons during printing */
+            }
+            .print-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        height: 100vh; /* Fill the height of the page */
+        padding: 0 20mm; /* Left and right margin */
+        box-sizing: border-box; /* Include padding in width/height */
+    }
+
+    .copy {
+        width: calc(50% - 10mm); /* Half width minus margin */
+        height: 100%; /* Full height */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional: add some shadow for separation */
+    }
+
+            }
+        .invoice-container {
+            width: 800px;
+            margin: 20px auto;
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        .header {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            font-weight: bold;
+        }
+
+        .no-border {
+            border: none;
+        }
+
+        .owner-risk {
+            border: 1px solid black;
+            text-align: center;
+            padding: 5px;
+            margin-top: 10px;
+            font-size: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<a href="javascript:window.print()" class="btn btn-danger btn-print">Print</a>
+<a href="{% url 'branchviewconsignment' %}" class="btn btn-back"
+   style="background-color: salmon; color: white;">Back</a>
+
+<button class="btn-download btn btn-primary" onclick="downloadPDF()">Download PDF</button>
+<div id="all-invoice-content">
+    <!-- Header Section -->
+    <div class="container invoice" style="float:center;" id="invoice-content">
+        {% for track_id, details in grouped_userdata.items %}
+        <table border="2" width="100%" class="fixed-td watermark-table">
+            <tr>
+
+                <td colspan="10">
+                    <div class="header">
+                        <p>Subject to Hubballi Jurisdtiction</p>
+                        <h1>{{ branchdetails.companyname }}</h1>
+                        <h3>
+                            {{ branchdetails.address }}<br>
+                            {{ branchdetails.phonenumber }}<br>
+                            GST NO.: {{ branchdetails.gst }}
+                        </h3>
+                    </div>
+                </td>
+
+            </tr>
+            <!-- Consignor and Consignee Details -->
+            <tr>
+                <td colspan="2">
+                    <strong>Consignor:</strong><br>
+                    Name: :{{ details.sender_name}}<br>
+                    Address: {{ details.sender_address }}<br>
+                    Mobile: {{ details.sender_mobile }}<br>
+                    Email: {{ details.sender_email }}<br>
+                    GST No: {{ details.sender_GST }}
+                </td>
+                <td colspan="2">
+                    <strong>Consignee:</strong><br>
+                    Name: :{{ details.receiver_name}}<br>
+                    Address: {{ details.receiver_address }}<br>
+                    Mobile: {{ details.receiver_mobile }}<br>
+                    Email: {{ details.receiver_email }}<br>
+                    GST No: {{ details.receiver_GST }}
+                </td>
+            </tr>
+        </table>
+
+        <!-- Product Details -->
+        <table>
+            <tr>
+                <th>SL. NO</th>
+                <th>Qty</th>
+                <th>Pkg Type</th>
+                <th>Description</th>
+                <th>Actual Weight</th>
+                <th>Paid Weight</th>
+            </tr>
+            {% for product in details.extra_details %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ product.pieces }}</td>
+                <td>{{ product.desc_product }}</td>
+                <td>{{ product.prodDesc }}</td>
+                <td>{{ product.actualweight }}</td>
+                <td>{{ product.paidweight }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <th>Total</th>
+
+                <td>{{ details.totalpieces }}</td> <!-- Display the total actual weight -->
+                <td colspan="2"></td>
+                <td>{{ details.actualweight }}</td> <!-- Display the total actual weight -->
+                <td>{{ details.paidweight }}</td>
+            </tr>
+        </table>
+
+
+        <!-- Additional Details -->
+        <table>
+            <tr>
+                <th>Date</th>
+                <td>{{ details.date|date:"d-m-Y" }}</td>
+                <th>GC No</th>
+                <td>{{ details.track_id }}</td>
+                <th>COLLETCTION TYPE.</th>
+                <td>{{ details.collection_type }}</td>
+                <th>PARTICULAR</th>
+                <th>AMOUNT</th>
+
+
+            </tr>
+            <tr>
+                <th>From Branch</th>
+                <td>{{ details.route_from }}</td>
+                <th>To Branch</th>
+                <td>{{ details.route_to }}</td>
+                <th>COLLECTION AT</th>
+                <th>{{ details.collectionLocation }}</th>
+                <th>FREIGHT</th>
+                <td>{{ details.freight }}</td>
+
+
+            </tr>
+            <tr>
+                <th>Invoice Value</th>
+                <td>{{ details.invoicevalue }}</td>
+                <th>Invoice No</th>
+                <td>{{ details.invoiceNo }}</td>
+                <th>COLLETCTION VNO.</th>
+                <td>{{ details.collectionVehicleNo }}</td>
+                <th>DOOR COLL</th>
+                <td>{{ details.collection_charge }}</td>
+
+
+            </tr>
+            <tr>
+
+            <tr>
+                <th>Invoice E-Way Bill</th>
+                <td>{{ details.invoiceeway }}</td>
+                <th>DC Value</th>
+                <td>{{ details.dcvalue }}</td>
+            <th>LOAD TYPE</th>
+                <td>{{ details.loadtype }}</td>
+                <th>DOOR DEL</th>
+                <td>{{ details.delivery_charge }}</td>
+
+            </tr>
+            <tr>
+                <th>DC E-Way Bill</th>
+                <td colspan="3">{{ details.dcewaybill }}</td>
+                <th>DEL TYPE</th>
+                <td>{{ details.delivery_type }}</td>
+                <th>WEIGHT</th>
+                <td>{{ details.paidweight }}</td>
+
+            </tr>
+            <tr>
+                <td colspan="4">
+                <th>PAY MODE</th>
+                <td>{{ details.pay_status }}</td>
+                <th>WEIGHT CHG</th>
+                <td>{{ details.weightAmt }}</td>
+
+            </tr>
+            <tr>
+                <td colspan="4">
+                <th>TBB LOCN</th>
+                <td>{{ details.pay_tbb }}</td>
+                <th>HAMALI</th>
+                <td>{{ details.hamali }}</td>
+
+            </tr>
+            <tr>
+                <td colspan="4">
+                <th>REMARK</th>
+                <td>{{ details.remark }}</td>
+                <th>STS.CHG</th>
+                <td>{{ details.st_charge }}</td>
+
+            </tr>
+            <tr>
+                <td colspan="4">
+                <th>COD APPLI</th>
+                <td>{{ details.codapplicable }}</td>
+                <th>COD. CHG</th>
+                <td>{{ details.cod }}</td>
+
+            </tr>
+            <tr>
+                <td colspan="4">
+                <th>GST APPLI</th>
+                <td>{{ details.gstapplicable }}</td>
+                <th>GST.CHG</th>
+                <td>{{ details.gstcharge }}</td>
+
+            </tr>
+            <tr>
+                <td colspan="6">
+
+                <th>FOV.CHG</th>
+                <td>{{ details.fov }}</td>
+
+            </tr>
+            <tr>
+                <td colspan="6">
+
+                <th>OTHER.CHG</th>
+                <td>{{ details.otherCharge }}</td>
+
+            </tr>
+             <tr>
+                <td colspan="6">
+
+                <th>DETECTION.CHG</th>
+                <td>{{ details.deduction }}</td>
+
+            </tr>
+        </table>
+
+        <!-- Charges Details -->
+
+        <!-- Branch Sign and Seal -->
+        <div style="margin-top: 10px; font-size: 10px;">
+            <strong>Branch Sign and Seal</strong>
+        </div>
+
+        <!-- Owner's Risk -->
+        <div class="owner-risk">
+            <p>AT OWNER'S RISK</p>
+            <p>Subject to Pune Jurisdiction Only</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Consignor Copy</p>
+        </div>
+    </div>
+    {% endfor %}
+</body>
+</html>

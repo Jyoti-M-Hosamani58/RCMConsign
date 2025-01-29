@@ -1,0 +1,173 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>Forms - Kaiadmin Bootstrap 5 Admin Dashboard</title>
+    <meta
+            content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+            name="viewport"
+    />
+    <link
+            rel="icon"
+            href="{% static 'assets/img/kaiadmin/favicon.ico' %}"
+            type="image/x-icon"
+    />
+
+    <!-- Fonts and icons -->
+    <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
+    <script>
+        WebFont.load({
+          google: { families: ["Public Sans:300,400,500,600,700"] },
+          custom: {
+            families: [
+              "Font Awesome 5 Solid",
+              "Font Awesome 5 Regular",
+              "Font Awesome 5 Brands",
+              "simple-line-icons",
+            ],
+            urls: ["{% static 'assets/css/fonts.min.css' %}"],
+          },
+          active: function () {
+            sessionStorage.fonts = true;
+          },
+        });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/plugins.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/kaiadmin.min.css' %}"/>
+
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link rel="stylesheet" href="{% static 'assets/css/demo.css' %}"/>
+</head>
+<body>
+<!-- End Sidebar -->
+{% include 'index_menu.html' %}
+<!-- End Navbar -->
+</div>
+
+<div class="container">
+    <div class="page-inner">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Vendor information</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+<div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+    <label for="companyname">Company Name:</label>
+    <input type="text" name="companyname" class="form-control" id="companyname" value="{{ vendor.companyname }}">
+                                    </div>
+</div>
+    <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+    <label for="phone">Phone:</label>
+    <input type="text" name="phone" id="phone" class="form-control" value="{{ vendor.phone }}">
+</div>
+</div>
+    <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+    <label for="address">Address:</label>
+    <input type="text" name="address" id="address" class="form-control" value="{{ vendor.address }}">
+</div>
+</div>
+    <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+    <label for="gst">GST:</label>
+    <input type="text" name="gst" id="gst" class="form-control" value="{{ vendor.gst }}">
+</div>
+</div>
+    <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+    <label for="vehicleNo">Vehicle No:</label>
+    <input type="text" name="vehicleNo" id="vehicleNo" class="form-control" value="{{ vendor.vehicleNo }}">
+</div>
+</div>
+    <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+    <label for="renewaldate">Renewal Date:</label>
+    <input type="text" name="renewaldate" id="renewaldate" class="form-control" value="{{ vendor.renewaldate }}">
+</div>
+</div>
+    <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+    <label for="vehiclerenewaldate">Vehicle Renewal Date:</label>
+    <input type="text" name="vehiclerenewaldate" class="form-control" id="vehiclerenewaldate" value="{{ vendor.vehiclerenewaldate }}">
+</div>
+</div>
+    <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+    <!-- Document File Input -->
+    <label for="document">Document (PDF):</label>
+    <input type="file" name="document" id="document" class="form-control" onchange="previewFile('document', 'documentPreview')">
+</div>
+</div>
+    <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+    <div id="documentPreviewContainer">
+        {% if vendor.document %}
+            <a href="{{ vendor.document.url }}" class="form-control" target="_blank" id="documentPreviewLink">View Current Document</a>
+        {% endif %}
+        <span id="documentPreview" style="display:none;">
+            <embed id="documentPreviewEmbed" class="form-control"  width="300" height="200" type="application/pdf">
+        </span>
+    </div>
+
+</div>
+</div>
+    <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+    <!-- Vehicle Document File Input -->
+    <label for="vehicledocument">Vehicle Document (PDF):</label>
+    <input type="file" name="vehicledocument" class="form-control" id="vehicledocument" onchange="previewFile('vehicledocument', 'vehicleDocumentPreview')">
+</div>
+</div>
+    <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+    <div id="vehicleDocumentPreviewContainer">
+        {% if vendor.vehicledocument %}
+            <a href="{{ vendor.vehicledocument.url }}" class="form-control" target="_blank" id="vehicleDocumentPreviewLink">View Current Vehicle Document</a>
+        {% endif %}
+        <span id="vehicleDocumentPreview" style="display:none;">
+            <embed id="vehicleDocumentPreviewEmbed" class="form-control" width="300" height="200" type="application/pdf">
+        </span>
+    </div>
+
+                                    </div>
+    </div>
+</div>
+                                    <div class="card-action">
+                    <button type="submit" class="btn btn-success">Update</button>
+                  </div></form>
+
+<script>
+    // Preview the selected PDF file
+    function previewFile(inputId, previewId) {
+        const file = document.getElementById(inputId).files[0];
+        const preview = document.getElementById(previewId);
+
+        // If a file is selected, show a preview
+        if (file && file.type === 'application/pdf') {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const embed = preview.querySelector('embed');
+                embed.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            // If no file selected, hide preview
+            preview.style.display = 'none';
+        }
+    }
+</script>

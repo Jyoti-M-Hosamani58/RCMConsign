@@ -1,0 +1,221 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>Ratan Cargo Movers</title>
+    <meta
+            content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+            name="viewport"
+    />
+    <link
+            rel="icon"
+            href="{% static 'assets/img/kaiadmin/favicon.ico' %}"
+            type="image/x-icon"
+    />
+
+    <!-- Fonts and icons -->
+    <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
+    <script>
+        WebFont.load({
+          google: { families: ["Public Sans:300,400,500,600,700"] },
+          custom: {
+            families: [
+              "Font Awesome 5 Solid",
+              "Font Awesome 5 Regular",
+              "Font Awesome 5 Brands",
+              "simple-line-icons",
+            ],
+            urls: ["{% static 'assets/css/fonts.min.css' %}"],
+          },
+          active: function () {
+            sessionStorage.fonts = true;
+          },
+        });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/plugins.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/kaiadmin.min.css' %}"/>
+
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link rel="stylesheet" href="{% static 'assets/css/demo.css' %}"/>
+</head>
+<body>
+<!-- End Sidebar -->
+{% include 'index_menu.html' %}
+<!-- End Navbar -->
+</div><br/> <br/> <br/> <br/>
+<form method="POST" action="{% url 'consignorMaster' %}">
+    {% csrf_token %}
+    <div class="container">
+        <div class="page-inner">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Branch Information</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- Consignor Name and Consignor Address in one row -->
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <input type="text" id="senderName" name="a1"
+                                               placeholder="Consigner Name"
+                                               required list="consignor_name"
+                                               oninput="showConsignorDatalist()"
+                                               onchange="fetchSenderDetails()" class="form-control">
+                                        <datalist id="consignor_name"></datalist>
+                                        <input type="hidden" id="senderID" name="senderid" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <input type="text" id="senderAddress" name="a4"
+                                               placeholder="Consigner Address" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <input type="text" id="senderCity" name="sender_city"
+                                               placeholder="Consigner City" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                 <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <input type="text" id="senderPincode" name="sender_pincode"
+                                               placeholder="Consigner Pincode" class="form-control">
+                                    </div>
+                                </div>
+                                <!-- Consignor Mobile and Consignor GST in one row -->
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <input type="tel" id="senderMobile" pattern="[0-9]{10}"
+                                               maxlength="10"
+                                               name="a2" placeholder="Consigner Mobile" required
+                                               class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <input type="text" id="sendergst" maxlength="15" name="sendergst"
+                                               placeholder="Consigner GST" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- FOC Checkbox and Consignor Pickup in one row -->
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <input type="text" id="senderEmail" name="sender_email"
+                                               placeholder="Consigner Email" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <label for="senderfoc">FOC (Free of Charge):</label>
+                                        <input type="checkbox" id="senderfoc" name="senderfoc" value="Yes">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <label for="sendergstapplicable">GST Applicable:</label>
+                                        <input type="checkbox" id="sendergstapplicable" name="sendergstapplicable" value="Yes">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-4">
+        <div class="form-group">
+            <input type="text" id="senderPickup" name="sender_pickup[]" placeholder="Consigner Pickup" class="form-control">
+        </div>
+        <div id="pickupInputsContainer"></div> <!-- Container to hold additional input fields -->
+        <button type="button" id="addPickupBtn" class="btn btn-primary">Add Pickup</button>
+    </div>
+
+
+                                <!-- Consignor TBB and Consignor City in one row -->
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <input type="text" id="senderTBB" name="sender_tbb"
+                                               placeholder="Consigner TBB" class="form-control">
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+
+                            <div class="card-action">
+                                <button class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+</form>
+
+<!-- End Custom template -->
+</div>
+<script>
+   document.getElementById('addPickupBtn').addEventListener('click', function() {
+    // Create new input field
+    const newInputDiv = document.createElement('div');
+    newInputDiv.classList.add('form-group');
+    newInputDiv.innerHTML = `
+        <input type="text" name="sender_pickup[]" placeholder="Consigner Pickup" class="form-control">
+    `;
+    document.getElementById('pickupInputsContainer').appendChild(newInputDiv);
+});
+
+</script>
+<!--   Core JS Files   -->
+<script src="{% static 'assets/js/core/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'assets/js/core/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
+
+<!-- jQuery Scrollbar -->
+<script src="{% static 'assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
+
+<!-- Chart JS -->
+<script src="{% static 'assets/js/plugin/chart.js/chart.min.js' %}"></script>
+
+<!-- jQuery Sparkline -->
+<script src="{% static 'assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js' %}"></script>
+
+<!-- Chart Circle -->
+<script src="{% static 'assets/js/plugin/chart-circle/circles.min.js' %}"></script>
+
+<!-- Datatables -->
+<script src="{% static 'assets/js/plugin/datatables/datatables.min.js' %}"></script>
+
+<!-- Bootstrap Notify -->
+<script src="{% static 'assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js' %}"></script>
+
+<!-- jQuery Vector Maps -->
+<script src="{% static 'assets/js/plugin/jsvectormap/jsvectormap.min.js' %}"></script>
+<script src="{% static 'assets/js/plugin/jsvectormap/world.js' %}"></script>
+
+<!-- Google Maps Plugin -->
+<script src="{% static 'assets/js/plugin/gmaps/gmaps.js' %}"></script>
+
+<!-- Sweet Alert -->
+<script src="{% static 'assets/js/plugin/sweetalert/sweetalert.min.js' %}"></script>
+
+<!-- Kaiadmin JS -->
+<script src="{% static 'assets/js/kaiadmin.min.js' %}"></script>
+
+<!-- Kaiadmin DEMO methods, don't include it in your project! -->
+<script src="{% static 'assets/js/setting-demo2.js' %}"></script>
+</body>
+</html>

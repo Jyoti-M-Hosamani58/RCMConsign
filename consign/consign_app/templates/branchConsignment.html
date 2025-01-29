@@ -1,0 +1,1611 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>RATAN CARGO MOVERS</title>
+    <meta
+            content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+            name="viewport"
+    />
+    <link
+            rel="icon"
+            href="{% static 'assets/img/kaiadmin/favicon.ico' %}"
+            type="image/x-icon"
+    />
+    <style>
+        /* Style the preview modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            background-color: #f9f9f9;
+            border: 1px solid #888;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .modal-header, .modal-footer {
+            padding: 10px;
+            text-align: right;
+        }
+
+        .modal-footer button {
+            margin-left: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+    </style>
+    <!-- Fonts and icons -->
+    <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
+    <script>
+        WebFont.load({
+          google: { families: ["Public Sans:300,400,500,600,700"] },
+          custom: {
+            families: [
+              "Font Awesome 5 Solid",
+              "Font Awesome 5 Regular",
+              "Font Awesome 5 Brands",
+              "simple-line-icons",
+            ],
+            urls: ["{% static 'assets/css/fonts.min.css' %}"],
+          },
+          active: function () {
+            sessionStorage.fonts = true;
+          },
+        });
+    </script>
+    <style>
+        /* Style for smaller input boxes */
+        .small-input {
+            width: 50%; /* Adjust the width as needed */
+        }
+    </style>
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/plugins.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/kaiadmin.min.css' %}"/>
+
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link rel="stylesheet" href="{% static 'assets/css/demo.css' %}"/>
+</head>
+<body>
+{% include 'branch_navbar.html' %}
+<!-- End Navbar -->
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const normalGCRadio = document.getElementById('normalGC');
+    normalGCRadio.checked = true; // Ensure the 'normalGC' radio is checked on page load.
+});
+
+</script>
+<div class="container">
+    <div class="page-inner">
+
+
+        <form method="post">
+            {% csrf_token %}
+            <p style="color:red;text-align:center;font-size:22px;font-weight:bold">{{msg}}</p>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Consignor information</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="d-flex">
+                                    <div class="form-check form-check-inline">
+                                        <input style="border: 2px solid darkblue;" checked type="radio" id="normalGC"
+                                               name="load_type"
+                                               class="form-check-input" value="normalGC">
+                                        <label for="normalGC" class="form-check-label">Party Load</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input
+                                                style="border: 2px solid darkblue;"
+                                                type="radio"
+                                                id="thirdPartyGC"
+                                                name="load_type"
+                                                class="form-check-input"
+                                                value="thirdPartyGC"
+                                                onclick="handleThirdPartySelection()"
+                                        >
+                                        <label for="thirdPartyGC" class="form-check-label">Third Party GC</label>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label>From</label>
+                                            <input type="text" class="form-control" id="from" name="from"
+                                                   placeholder="From"
+                                                   required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="form-group">
+                                            <label>To</label>
+                                            <input type="text" class="form-control" id="to" name="to" placeholder="To"
+                                                   required><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">Consignor</div>
+                                </div>
+                                <div class="container">
+                                    <div class="row">
+                                        <!-- Consignor Card -->
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">CONSIGNOR</h6>
+                                                    <input type="text" id="senderName" name="a1" placeholder="Consigner"
+                                                           required list="consignor_name" oninput="showClientDatalist()"
+                                                           onchange="fetchClientDetails()" class="form-control">
+                                                    <datalist id="consignor_name"></datalist>
+                                                    <input type="hidden" id="senderID" placeholder="Enter Sender ID">
+                                                    <input type="hidden" id="senderFOC" name="senderFOC">
+                                                    <input type="hidden" id="senderclienttype">
+                                                    <input type="hidden" id="senderThirdParty">
+
+                                                    <br>
+                                                    <input type="text" id="senderAddress" name="a4"
+                                                           placeholder="Consigner Address" class="form-control">
+                                                    <br>
+
+                                                    <input type="tel" id="senderMobile" pattern="[0-9]{10}"
+                                                           maxlength="10"
+                                                           name="a2" placeholder="Consigner Mobile" required
+                                                           class="form-control">
+                                                    <br>
+                                                    <input type="text" id="senderEmail" name="sendemail"
+                                                           placeholder="Consigner Email" class="form-control">
+                                                    <br>
+
+                                                    <input type="text" id="sendergst" maxlength="15" name="sendergst"
+                                                           placeholder="Consigner GST" required class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Consignee Card -->
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">CONSIGNEE</h6>
+                                                    <input type="text" id="receiverName" name="a5"
+                                                           placeholder="Consignee"
+                                                           required list="consignee_name"
+                                                           oninput="showConsigneeDatalist()"
+                                                           onchange="fetchConsigneeDetails()" class="form-control">
+                                                    <datalist id="consignee_name"></datalist>
+                                                    <input type="hidden" id="receiverId" name="id" class="form-control">
+                                                    <input type="hidden" id="receiverFOC" name="receiverFOC">
+                                                    <input type="hidden" id="receiverclienttype">
+                                                    <input type="hidden" id="receiverThirdParty">
+
+                                                    <br>
+                                                    <input type="text" id="receiverAddress" name="a8"
+                                                           placeholder="Consignee Address" class="form-control">
+                                                    <br>
+
+                                                    <input type="tel" id="receiverMobile" pattern="[0-9]{10}"
+                                                           maxlength="10"
+                                                           name="a6" placeholder="Consignee Mobile" required
+                                                           class="form-control">
+                                                    <br>
+                                                    <input type="text" id="receiverEmail" name="recemail"
+                                                           placeholder="Consignee Email" class="form-control">
+                                                    <br>
+                                                    <input type="text" id="receivergst" maxlength="15"
+                                                           name="receivergst"
+                                                           placeholder="Consignee GST" required class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4 class="card-title">Information</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table id="basic-datatables"
+                                                           class="display table table-striped table-hover">
+                                                        <thead>
+                                                        <tr class="form-control">
+                                                            <th style="width: 1%;">SL. No</th>
+                                                            <th style="width: 9%;">No. of Pkg</th>
+                                                            <th style="width: 10%;">Method of pkg</th>
+                                                            <th style="width: 10%;">DESC said to contain</th>
+                                                            <th style="width: 10%;">Actual Weight</th>
+                                                            <th style="width: 10%;">Paid Weight</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody id="productTableBody" class="form-control">
+                                                        <!-- Default Row -->
+                                                        <tr>
+                                                            <td>1</td> <!-- Serial Number -->
+                                                            <td><input type="text" name="pieces[]"
+                                                                       oninput="calculatePkgCharge()"
+                                                                       class="small-input">
+                                                            </td>
+                                                            <td><input type="text" name="product[]"
+                                                                       oninput="calculatePkgCharge()"></td>
+                                                            <td><input type="text" name="desc[]"></td>
+                                                            <td><input type="text" name="actualweight[]"
+                                                                       class="small-input"></td>
+                                                            <td><input type="text" name="paidweight[]"
+                                                                       class="small-input">
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="totals">
+                                                    <p>Total No. of Pkg: <span id="totalPkgs"
+                                                                               name="totalpieces">0.00</span>
+                                                    </p>
+                                                    <p>Total Actual Weight: <span id="totalActualWeight"
+                                                                                  name="totalactalweight">0.00</span>
+                                                    </p>
+                                                    <p>Total Paid Weight: <span id="totalPaidWeight"
+                                                                                name="totalpaidweight">0.00</span>
+                                                    </p>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Button to add more rows -->
+                                    <button type="button" id="addRowBtn" class="btn btn-primary">Add Row</button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Load Type</label>
+                                <div class="d-flex">
+                                    <div class="form-check form-check-inline">
+                                        <input style="border: 2px solid darkblue;"  type="radio" id="partyLoad"
+                                               name="load_type"
+                                               class="form-check-input" value="partyLoad"
+                                                onchange="handleLoadTypeChange('partyLoad')" checked>
+                                        <label for="partyLoad" class="form-check-label" >Party Load</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+    <input style="border: 2px solid darkblue;"
+           type="radio"
+           id="fullLoad"
+           name="load_type"
+           class="form-check-input"
+           value="fullLoad"
+           onchange="handleLoadTypeChange('fullLoad')">
+    <label for="fullLoad" class="form-check-label">Full Load</label>
+</div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Pay Status</h6>
+                                        <div class="row">
+                                            <div id="thirdPartyFields" style="margin-top: 20px;">
+                                                <div class="col-md-6 col-lg-6" id="paystatusContainer">
+                                                    <div class="form-group">
+                                                        <label for="paystatus" class="form-label">Pay Status</label>
+                                                        <select name="paystatus" class="form-control" id="paystatus"
+                                                                onchange="updatePaymentMode()">
+                                                            <option value="">-- Select --</option>
+                                                            <option value="Consignor">Consignor</option>
+                                                            <option value="Consignee">Consignee</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 col-lg-6" id="thirdPartyNameContainer"
+                                                 style="display: none;">
+                                                <div class="form-group">
+                                                    <label for="thirdPartyName" class="form-label">Third Party
+                                                        Name</label>
+                                                    <input
+                                                            type="text"
+                                                            id="thirdPartyName"
+                                                            name="thirdPartyName"
+                                                            class="form-control"
+                                                            placeholder="Enter Name"
+                                                    >
+                                                </div>
+                                            </div>
+
+                                            <!-- ID Input -->
+                                            <div class="col-md-6 col-lg-6" id="thirdPartyIdContainer"
+                                                 style="display: none;">
+                                                <div class="form-group">
+                                                    <label for="thirdPartyId" class="form-label">Third Party ID</label>
+                                                    <input
+                                                            type="text"
+                                                            id="thirdPartyId"
+                                                            name="thirdPartyId"
+                                                            class="form-control"
+                                                            placeholder="Enter ID"
+                                                    >
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="payment" class="form-label">Payment Mode</label>
+                                                    <select name="payment" class="form-control" id="payment">
+                                                        <option value="">-- Select --</option>
+                                                        <option value="ToPay">ToPay</option>
+                                                        <option value="Paid">Paid</option>
+                                                        <option value="TBB">TBB</option>
+                                                        <option value="FOC">FOC</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-6 col-lg-6" id="tbbLocationContainer"
+                                                 style="display: none;">
+                                                <div class="form-group">
+                                                    <label for="tbbLocation">TBB Location</label>
+                                                    <input type="text" id="tbbLocation" name="tbbLocation"
+                                                           class="form-control"
+                                                           readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="remark">Remark</label>
+                                                    <input type="text" id="remark" name="remark" class="form-control"
+                                                           placeholder="Enter Remark">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">Invoice Details</div>
+                                </div>
+                                <div id="dynamicContainer">
+                                    <!-- Initial set of radio buttons and fields -->
+                                    <button type="button" class="btn btn-primary btn-sm ml-3" onclick="addRadioGroup()">
+                                        Add
+                                    </button>
+
+                                    <div class="card-body">
+                                        <div class="form-check d-flex">
+                                            <div class="mr-4">
+                                                <input class="form-check-input" style="border: 2px solid darkblue;"
+                                                       type="radio" value="DC" id="radioDC1" name="documentType1"
+                                                       onclick="toggleFields(1, 'DC')">
+                                                <label class="form-check-label" for="radioDC1">DC (Delivery
+                                                    Challan)</label>
+                                            </div>
+                                            <div>
+                                                <input class="form-check-input" style="border: 2px solid darkblue;"
+                                                       type="radio" id="radioInvoice1" name="documentType1"
+                                                       value="Invoice" onclick="toggleFields(1, 'Invoice')">
+                                                <label class="form-check-label" for="radioInvoice1">Invoice</label>
+                                            </div>
+                                        </div>
+                                        <div id="dynamicFields1" class="dynamic-fields"></div>
+
+
+                                        <!-- Placeholder for dynamic fields -->
+                                        <!-- DC fields template -->
+                                        <!-- DC Fields Template -->
+                                        <template id="dcFieldsTemplate">
+                                            <div class="row dc-group">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="DC No"
+                                                               class="form-control dc_no" name="dc_no[]">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="DC Value"
+                                                               class="form-control dc_value" name="dc_value[]">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="E-Way Bill No"
+                                                               class="form-control ewaybill_no_dc"
+                                                               name="ewaybill_no_dc[]">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mt-2">
+                                                    <button type="button" class="btn btn-success btn-sm"
+                                                            onclick="addDCRow(this)">Add Row
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                        <!-- Invoice Fields Template -->
+                                        <template id="invoiceFieldsTemplate">
+                                            <div class="row invoice-group">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="Invoice No"
+                                                               class="form-control prod_invoice" name="prod_invoice[]">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="Invoice Value"
+                                                               class="form-control prod_price" name="prod_price[]"
+                                                               oninput="calculateFOVCharge()">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="E-Way Bill No"
+                                                               class="form-control ewaybill_no_invoice"
+                                                               name="ewaybill_no_invoice[]">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mt-2">
+                                                    <button type="button" class="btn btn-success btn-sm"
+                                                            onclick="addInvoiceRow(this)">Add Row
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="card">
+
+                                <div class="col-md-12">
+                                    <div class="form-group d-flex align-items-center">
+                                        <div class="form-check form-check-inline">
+                                            <input type="checkbox" style="border: 2px solid darkblue;"
+                                                   id="consignor_copy"
+                                                   name="consignor_copy"
+                                                   checked
+                                                   value="consignor"
+                                                   class="form-check-input">
+                                            <label for="consignor_copy" class="form-check-label">Consignor Copy</label>
+                                        </div>
+
+                                        <div class="form-check form-check-inline">
+                                            <input type="checkbox" style="border: 2px solid darkblue;"
+                                                   id="consignee_copy"
+                                                   name="consignee_copy"
+                                                   value="consignee"
+                                                   checked class="form-check-input">
+                                            <label for="consignee_copy" class="form-check-label">Consignee Copy</label>
+                                        </div>
+
+                                        <div class="form-check form-check-inline">
+                                            <input type="checkbox" style="border: 2px solid darkblue;" id="payment_copy"
+                                                   name="payment_copy"
+                                                   value="payment"
+                                                   checked
+                                                   class="form-check-input">
+                                            <label for="payment_copy" class="form-check-label">Payment Copy</label>
+                                        </div>
+
+                                        <div class="form-check form-check-inline">
+                                            <input type="checkbox" style="border: 2px solid darkblue;" id="ho_copy"
+                                                   name="ho_copy"
+                                                   value="ho"
+                                                   checked
+                                                   class="form-check-input">
+                                            <label for="ho_copy" class="form-check-label">HO Copy</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-lg-4">
+                                    <label>Collection Type</label>
+                                    <div class="form-group d-flex align-items-center">
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" id="godownCollection" name="collection_option"
+                                                   style="border: 2px solid darkblue;" value="GODOWN"
+                                                   class="form-check-input custom-radio">
+                                            <label for="godownCollection" class="form-check-label">Godown
+                                                Collection</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" id="localCollection" style="border: 2px solid darkblue;"
+                                                   name="collection_option" value="LCM"
+                                                   class="form-check-input custom-radio">
+                                            <label for="localCollection" class="form-check-label">Local
+                                                Collection</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" id="directCollection" name="collection_option"
+                                                   style="border: 2px solid darkblue;" value="GDM"
+                                                   class="form-check-input custom-radio">
+                                            <label for="directCollection" class="form-check-label">Direct
+                                                Collection</label>
+                                        </div>
+                                    </div>
+                                    <div id="additionalInputs" style="display: none; margin-top: 15px;">
+                                        <div class="form-group">
+                                            <label for="vehicleNo">Vehicle No</label>
+                                            <input type="text" name="vehicleNo" id="vehicleNo" class="form-control"
+                                                   placeholder="Enter Vehicle No">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="location">Location</label>
+                                            <select id="location" name="location" class="form-control"
+                                                    onchange="fetchPickRate()">
+                                                <!-- Options will be dynamically added here -->
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                                <!-- Delivery Type -->
+                                <div class="col-md-4 col-lg-4">
+                                    <label>Delivery Type</label>
+                                    <div class="form-group d-flex align-items-center">
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" id="godownDelivery" name="delivery_option"
+                                                   style="border: 2px solid darkblue;" value="GODOWN"
+                                                   class="form-check-input custom-radio">
+                                            <label for="godownDelivery" class="form-check-label">Godown Delivery</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" id="localDelivery" style="border: 2px solid darkblue;"
+                                                   name="delivery_option" value="LCM"
+                                                   class="form-check-input custom-radio">
+                                            <label for="localDelivery" class="form-check-label">Local Delivery</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" id="drirectDelivery" name="delivery_option"
+                                                   style="border: 2px solid darkblue;" value="GDM"
+                                                   class="form-check-input custom-radio">
+                                            <label for="drirectDelivery" class="form-check-label">Direct
+                                                Delivery</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">Charges</h6>
+                                    <div class="mb-3">
+                                        <label for="actualweightvalue" class="form-label">Actual Weight</label>
+                                        <input type="text" placeholder="Actual Weight" class="form-control"
+                                               id="actualweightvalue"
+                                               name="actualweightvalue">
+
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="paidweightvalue" class="form-label">Paid Weight</label>
+                                        <input type="text" placeholder="Paid Weight" id="paidweightvalue"
+                                               class="form-control" oninput="calculateFreight()" name="paidweightvalue">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="rate" class="form-label">Rate Per KG</label>
+                                        <input type="text" name="weightAmt" class="form-control"
+                                               placeholder="Rate Per KG"
+                                               id="rate" oninput="calculateFreight()">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="freight" class="form-label">Freight</label>
+                                        <input type="text" class="form-control" id="freight" name="freight"
+                                               placeholder="Freight">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="hamali" class="form-label">Hamali</label>
+                                        <input type="text" class="form-control" id="hamali" name="hamali"
+                                               placeholder="Hamali Charge">
+                                    </div>
+
+
+                                    <div class="mb-3">
+                                        <label for="deduction" class="form-label">Detection</label>
+                                        <input type="text" oninput="calculateTotalCost()" class="form-control"
+                                               id="deduction"
+                                               name="deduction" placeholder="Dedutction Charge">
+
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="delivery_charge" class="form-label">Door Delivery
+                                            Charges</label>
+                                        <input id="delivery_charge" oninput="calculateTotalCost()"
+                                               name="delivery_charge" class="form-control"
+                                               placeholder="Door Delivery Charge"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="collection_charge" class="form-label">Door Collection
+                                            Charges</label>
+                                        <input id="collection_charge" oninput="calculateTotalCost()"
+                                               name="collection_charge" class="form-control"
+                                               placeholder="Door Collection Charge"/>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-group me-3">
+                                            <label for="codapplicable" class="me-2">COD Applicable:</label>
+                                            <input type="checkbox" id="codapplicable" name="codapplicable"
+                                                   value="Yes" onchange="toggleCodCharges()">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="gstapplicable" class="me-2">GST Applicable:</label>
+                                            <input type="checkbox" id="gstapplicable" name="gstapplicable"
+                                                   value="Yes"
+                                                   onchange="toggleSTCharge()">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3" id="codChargesContainer" style="display: none;">
+                                        <label for="cod" class="form-label">COD Charges</label>
+                                        <input id="cod" oninput="calculateTotalCost()"
+                                               name="cod" class="form-control" placeholder="COD Charge"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="st_charge" class="form-label">ST Charge</label>
+                                        <input id="st_charge" class="form-control"
+                                               oninput="calculateTotalCost()"
+                                               name="st_charge" placeholder="ST Charge" value="80"/>
+
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fovcharge" class="form-label">FOV Charge</label>
+                                        <input id="fovcharge" class="form-control"
+                                               oninput="calculateTotalCost()"
+                                               name="fovcharge" placeholder="FOV Charge"/>
+
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="pkgcharge" class="form-label">PKG Charge</label>
+                                        <input id="pkgcharge" class="form-control"
+                                               oninput="calculateTotalCost()" name="pkgcharge"
+                                               placeholder="PKG Charge">
+                                    </div>
+                                    <div class="mb-3" id="gstChargeContainer" style="display: none;">
+                                        <label for="gstCharge" class="form-label">GST Charge</label>
+                                        <input type="text" id="gstCharge" class="form-control"
+                                               oninput="calculateTotalCost()"
+                                               name="gstCharge" placeholder="GST Charge"/>
+
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="balance" class="form-label">Other</label>
+                                        <input type="text" id="balance" class="form-control"
+                                               oninput="calculateTotalCost()"
+                                               name="balance"/>
+
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="total" class="form-label">Total</label>
+                                        <input type="text" class="form-control" id="total" name="total"
+                                               placeholder="Total Cost"
+                                        >
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" onclick="showPreview()" class="btn btn-primary">Submit</button>
+
+                    </div>
+
+                </div>
+        </form>
+    </div>
+</div>
+</div>
+<script>
+    function handleThirdPartySelection() {
+       const paystatus = document.getElementById("paystatus");
+       const thirdPartyOptionExists = Array.from(paystatus.options).some(
+           (option) => option.value === "Third Party"
+       );
+
+       // Add "Third Party" to the dropdown if not present
+       if (!thirdPartyOptionExists) {
+           const thirdPartyOption = document.createElement("option");
+           thirdPartyOption.value = "Third Party";
+           thirdPartyOption.textContent = "Third Party";
+           paystatus.appendChild(thirdPartyOption);
+       }
+
+       // Display third-party-specific fields
+       document.getElementById("thirdPartyNameContainer").style.display = "block";
+       document.getElementById("thirdPartyIdContainer").style.display = "block";
+   }
+
+   // Handle hiding third-party-specific fields
+   document.querySelectorAll('input[name="load_type"]').forEach((radio) => {
+       radio.addEventListener("change", (event) => {
+           const paystatus = document.getElementById("paystatus");
+           const nameContainer = document.getElementById("thirdPartyNameContainer");
+           const idContainer = document.getElementById("thirdPartyIdContainer");
+
+           if (event.target.value !== "thirdPartyGC") {
+               // Remove "Third Party" option
+               const thirdPartyOption = Array.from(paystatus.options).find(
+                   (option) => option.value === "Third Party"
+               );
+               if (thirdPartyOption) {
+                   thirdPartyOption.remove();
+               }
+
+               // Hide third-party-specific fields
+               nameContainer.style.display = "none";
+               idContainer.style.display = "none";
+           }
+       });
+   });
+</script>
+
+<script>
+    function fetchRateAndCOD() {
+    const routeFrom = document.getElementById("from").value.trim();
+    const routeTo = document.getElementById("to").value.trim();
+    const paymentMode = document.getElementById("payment").value;
+
+    if (!routeFrom || !routeTo) {
+        alert("Please enter both 'From' and 'To' locations.");
+        return;
+    }
+
+    let id = null;
+
+    // Determine the ID based on payment mode
+    if (paymentMode === "TBB") {
+        const payStatus = document.getElementById("paystatus").value;
+
+        if (payStatus === "Consignor") {
+            id = document.getElementById("senderID").value.trim();
+        } else if (payStatus === "Consignee") {
+            id = document.getElementById("receiverId").value.trim();
+        } else if (payStatus === "Third Party") {
+            id = document.getElementById("thirdPartyId").value.trim();
+        }
+    }
+
+    const params = new URLSearchParams({
+        from: routeFrom,
+        to: routeTo,
+        payment: paymentMode,
+    });
+
+    // Only include 'id' if it is not null or empty
+    if (id) {
+        params.append("id", id);
+    }
+
+    console.log("Sending request with parameters:", params.toString());
+
+    fetch(`/fetch_rate_and_cod?${params.toString()}`)
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("Response received:", data);
+
+            if (data.error) {
+                alert(data.error);
+            } else {
+                // Ensure to update fields with data
+                document.getElementById("rate").value = data.rate ? data.rate.toFixed(2) : "N/A";
+                document.getElementById("cod").value = data.cod ? data.cod.toFixed(2) : "N/A";
+            }
+            calculateFreight();
+        })
+        .catch((error) => {
+            console.error("Error fetching rate and COD:", error);
+        });
+}
+
+    // Event listener for Payment Mode dropdown
+    document.getElementById("payment").addEventListener("change", function () {
+        const paymentMode = this.value;
+
+        if (paymentMode === "TBB") {
+            document.getElementById("thirdPartyFields").style.display = "block";
+        } else {
+            document.getElementById("thirdPartyFields").style.display = "none";
+        }
+
+        fetchRateAndCOD();
+    });
+
+    // Event listener for Pay Status dropdown within TBB
+    document.getElementById("paystatus").addEventListener("change", fetchRateAndCOD);
+</script>
+
+<script>
+    function fetchPickRate() {
+    const senderID = document.getElementById("senderID")?.value || null;
+    const pickPlace = document.getElementById("location")?.value || null;
+
+    if (!pickPlace) {
+        alert("Please select a location.");
+        return;
+    }
+
+    // Prepare query parameters
+    const params = new URLSearchParams({
+        senderID: senderID,
+        pickPlace: pickPlace,
+    });
+
+    // Fetch pick rate
+    fetch(`/get-pick-rate/?${params.toString()}`)
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.pickrate) {
+                document.getElementById("collection_charge").value = data.pickrate.toFixed(2);
+                calculateTotalCost(); // Trigger cost calculation
+            } else {
+                alert(data.error || "Pick rate not found.");
+                document.getElementById("collection_charge").value = "";
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching pick rate:", error);
+        });
+}
+
+</script>
+
+<script>
+    function toggleCodCharges() {
+        const codApplicable = document.getElementById('codapplicable');
+        const codChargesContainer = document.getElementById('codChargesContainer');
+
+        // Show or hide the COD Charges input based on the checkbox state
+        if (codApplicable.checked) {
+            codChargesContainer.style.display = 'block';
+        } else {
+            codChargesContainer.style.display = 'none';
+            // Optionally clear the COD Charges input value when hiding
+            document.getElementById('cod').value = '';
+        }
+        fetchRateAndCOD();
+    }
+</script>
+
+<!-- Add the following script just above the closing </body> tag -->
+<script>
+    function updatePaymentMode() {
+    const payStatus = document.getElementById('paystatus').value; // Get selected Pay Status
+    const paymentMode = document.getElementById('payment'); // Get Payment Mode dropdown
+
+    // Automatically select "TBB" if Pay Status is "Consignor" or "Consignee"
+    if (payStatus === 'Consignor' || payStatus === 'Consignee') {
+        paymentMode.value = 'TBB';
+    } else {
+        // Reset Payment Mode if no valid Pay Status is selected
+        paymentMode.value = '';
+    }
+}
+
+
+    let groupCounter = 1; // Keeps track of the number of groups
+
+function addRadioGroup() {
+    groupCounter++;
+    const dynamicContainer = document.getElementById('dynamicContainer');
+
+    // Create a new card-body container
+    const newCardBody = document.createElement('div');
+    newCardBody.classList.add('card-body');
+
+    // Add radio buttons
+    newCardBody.innerHTML = `
+        <div class="form-check d-flex">
+            <div class="mr-4">
+                <input class="form-check-input" style="border: 2px solid darkblue;" type="radio" value="DC" id="radioDC${groupCounter}" name="documentType${groupCounter}" onclick="toggleFields(${groupCounter}, 'DC')">
+                <label class="form-check-label" for="radioDC${groupCounter}">DC (Delivery Challan)</label>
+            </div>
+            <div>
+                <input class="form-check-input" style="border: 2px solid darkblue;" type="radio" id="radioInvoice${groupCounter}" name="documentType${groupCounter}" value="Invoice" onclick="toggleFields(${groupCounter}, 'Invoice')">
+                <label class="form-check-label" for="radioInvoice${groupCounter}">Invoice</label>
+            </div>
+        </div>
+        <div id="dynamicFields${groupCounter}" class="dynamic-fields"></div>
+    `;
+
+    // Append the new card-body to the container
+    dynamicContainer.appendChild(newCardBody);
+}
+
+function toggleFields(groupId, type) {
+    const dynamicFieldsContainer = document.getElementById(`dynamicFields${groupId}`);
+    dynamicFieldsContainer.innerHTML = ''; // Clear existing fields
+
+    const templateId = type === 'DC' ? 'dcFieldsTemplate' : 'invoiceFieldsTemplate';
+    const template = document.getElementById(templateId);
+
+    if (template) {
+        dynamicFieldsContainer.innerHTML = template.innerHTML; // Clone template content
+    }
+}
+
+function calculateFOVCharge() {
+    // Placeholder function for calculations if needed
+    console.log('Calculating FOV charge...');
+}
+
+
+    // Function to add new DC fields in the current group
+function addDCRow(button) {
+    const group = button.closest('.dc-group'); // Get the current group
+    const container = group.parentElement; // Parent container holding the rows
+    const template = document.getElementById('dcFieldsTemplate'); // Template
+
+    // Clone the template content and append it
+    const newGroup = template.content.cloneNode(true);
+    container.appendChild(newGroup);
+}
+
+// Function to add new Invoice fields in the current group
+function addInvoiceRow(button) {
+    const group = button.closest('.invoice-group'); // Get the current group
+    const container = group.parentElement; // Parent container holding the rows
+    const template = document.getElementById('invoiceFieldsTemplate'); // Template
+
+    // Clone the template content and append it
+    const newGroup = template.content.cloneNode(true);
+    container.appendChild(newGroup);
+}
+
+</script>
+
+<script>
+    function showClientDatalist() {
+        const input = document.getElementById('senderName');
+        const datalist = document.getElementById('consignor_name');
+
+        if (input.value.length >= 2) {
+            fetch(`/get_client_name?query=${encodeURIComponent(input.value)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Fetched data:', data); // Debugging: Check the data in the console
+                    datalist.innerHTML = ''; // Clear previous options
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(number => {
+                            const option = document.createElement('option');
+                            option.value = number;
+                            datalist.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = 'No results';
+                        datalist.appendChild(option);
+                    }
+                })
+                .catch(error => console.error('Error fetching vehicle numbers:', error));
+        } else {
+            datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+        }
+    }
+    function fetchClientDetails() {
+    const senderName = document.getElementById('senderName').value;
+
+    if (senderName) {
+        fetch(`/get_client_details?name=${encodeURIComponent(senderName)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched client details:', data); // Debugging
+
+                // Populate the form fields with the fetched data
+                document.getElementById('senderID').value = data.tbbId || '';
+                document.getElementById('senderFOC').value = data.foc || '';
+                document.getElementById('senderAddress').value = data.address || '';
+                document.getElementById('senderMobile').value = data.mobile || '';
+                document.getElementById('senderEmail').value = data.email || '';
+                document.getElementById('sendergst').value = data.GST || '';
+                document.getElementById('senderclienttype').value = data.clientType || '';
+                document.getElementById('senderThirdParty').value = data.thirdParty || '';
+
+                fetchSenderPickup(data.tbbId);
+
+            })
+            .catch(error => console.error('Error fetching client details:', error));
+    }
+}
+
+    function showConsigneeDatalist() {
+        const input = document.getElementById('receiverName');
+        const datalist = document.getElementById('consignee_name');
+
+        if (input.value.length >= 2) {
+            fetch(`/get_client_name?query=${encodeURIComponent(input.value)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Fetched data:', data); // Debugging: Check the data in the console
+                    datalist.innerHTML = ''; // Clear previous options
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(number => {
+                            const option = document.createElement('option');
+                            option.value = number;
+                            datalist.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = 'No results';
+                        datalist.appendChild(option);
+                    }
+                })
+                .catch(error => console.error('Error fetching vehicle numbers:', error));
+        } else {
+            datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+        }
+    }
+    function fetchConsigneeDetails() {
+    const receiverName = document.getElementById('receiverName').value;
+
+    if (receiverName) {
+        fetch(`/get_client_consignee_details?name=${encodeURIComponent(receiverName)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched client details:', data); // Debugging
+
+                // Populate the form fields with the fetched data
+                document.getElementById('receiverId').value = data.tbbId || '';
+                document.getElementById('receiverFOC').value = data.foc || '';
+                document.getElementById('receiverAddress').value = data.address || '';
+                document.getElementById('receiverMobile').value = data.mobile || '';
+                document.getElementById('receiverEmail').value = data.email || '';
+                document.getElementById('receivergst').value = data.GST || '';
+                document.getElementById('receiverclienttype').value = data.clientType || '';
+                document.getElementById('receiverThirdParty').value = data.thirdParty || '';
+
+            })
+            .catch(error => console.error('Error fetching client details:', error));
+    }
+}
+
+
+</script>
+
+
+<script>
+    function calculatePkgCharge() {
+    const tableBody = document.getElementById("productTable").querySelector("tbody");
+    const rows = tableBody.querySelectorAll("tr");
+    let totalPkgCharge = 0;
+
+    rows.forEach(row => {
+        const piecesInput = row.querySelector('input[name="pieces[]"]');
+        const productInput = row.querySelector('input[name="product[]"]');
+        const pieces = parseFloat(piecesInput.value) || 0;
+        const product = productInput.value.trim();
+
+        if (pieces > 0 && product) {
+            // Fetch rate for the product via AJAX
+            fetch(`/fetch-pkg-rate/?product=${encodeURIComponent(product)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch the PKG rate.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const rate = data.rate || 0;
+                    const charge = pieces * rate;
+
+                    // Add to total package charge
+                    totalPkgCharge += charge;
+
+                    // Update the pkgcharge field
+                    document.getElementById("pkgcharge").value = totalPkgCharge.toFixed(2);
+                })
+                .catch(error => {
+                    console.error("Error fetching PKG rate:", error);
+                });
+        }
+    });
+}
+
+</script>
+<script>
+    function toggleSTCharge() {
+        const gstCheckbox = document.getElementById("gstapplicable");
+        const gstChargeContainer = document.getElementById("gstChargeContainer");
+
+        // Show or hide the ST Charge field based on GST checkbox state
+        if (gstCheckbox.checked) {
+            gstChargeContainer.style.display = "block";
+        } else {
+            gstChargeContainer.style.display = "none";
+        }
+    }
+</script>
+<script>
+    function calculateFOVCharge() {
+        // Get the Invoice Value
+        const invoiceValue = parseFloat(document.getElementById("prod_price").value) || 0;
+
+        // Calculate FOV Charge (0.2% of Invoice Value)
+        let fovCharge = invoiceValue * 0.002;
+
+        // Ensure a minimum charge of 10
+        if (fovCharge < 10) {
+            fovCharge = 10;
+        }
+
+        // Update the FOV Charge field
+        document.getElementById("fovcharge").value = fovCharge.toFixed(2);
+    }
+</script>
+<script>
+
+
+    function resetFields() {
+        document.getElementById('weightAmt').value = '';
+        document.getElementById('cod').value = '';
+        document.getElementById('delivery_charge').value = '';
+        document.getElementById('collection_charge').value = '';
+    }
+
+
+
+            function updateTbbLocation() {
+    const paystatus = document.getElementById('paystatus').value; // Get pay status value
+    const paymentMode = document.getElementById('payment_mode')?.value; // Get payment mode value
+    const tbbLocationContainer = document.getElementById('tbbLocationContainer'); // TBB location container
+    const tbbLocation = document.getElementById('tbbLocation'); // TBB location input field
+
+    // Clear the TBB location field initially
+    tbbLocation.value = '';
+
+    // Only proceed if payment mode is TBB
+    if (paymentMode === 'TBB' && paystatus) {
+        let id = '';
+        if (paystatus === 'Consignor') {
+            id = document.getElementById('senderID')?.value; // Get sender ID
+        } else if (paystatus === 'Consignee') {
+            id = document.getElementById('receiverId')?.value; // Get receiver ID
+        }
+
+        if (id) {
+            const senderOrReceiver = paystatus === 'Consignor' ? 'sender_tbb' : 'receiver_tbb';
+
+            // Fetch the TBB location from the server
+            fetch(`/get_tbb_location?type=${encodeURIComponent(senderOrReceiver)}&id=${encodeURIComponent(id)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('Error fetching TBB location:', data.error);
+                        alert(data.error); // Show error to the user
+                        tbbLocationContainer.style.display = 'none'; // Hide container on error
+                    } else {
+                        tbbLocation.value = data.location || ''; // Set the fetched TBB location
+                        tbbLocationContainer.style.display = 'block'; // Show the container
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching TBB location:', error);
+                    alert('Failed to fetch TBB location. Please try again.');
+                    tbbLocationContainer.style.display = 'none'; // Hide container on error
+                });
+        } else {
+            // Hide the TBB location container if no valid ID is found
+            tbbLocationContainer.style.display = 'none';
+        }
+    } else {
+        // Hide the TBB location container if payment mode is not TBB
+        tbbLocationContainer.style.display = 'none';
+    }
+
+    // Fetch pick rate regardless of TBB status
+    fetchPickRate();
+}
+
+                // Select all radio buttons
+const radios = document.querySelectorAll('input[name="collection_option"]');
+const additionalInputs = document.getElementById('additionalInputs');
+
+});
+
+</script>
+
+<script>
+    function handleLoadTypeChange(value) {
+        const directCollection = document.getElementById("directCollection");
+        const directDelivery = document.getElementById("drirectDelivery");
+        const additionalInputs = document.getElementById("additionalInputs");
+
+        if (value === "fullLoad") {
+            // Automatically select and disable "Direct Collection" and "Direct Delivery"
+            directCollection.checked = true;
+            directDelivery.checked = true;
+            directCollection.disabled = true;
+            directDelivery.disabled = true;
+
+            // Hide other options in the same group
+            document.getElementById("localCollection").disabled = true;
+            document.getElementById("godownCollection").disabled = true;
+            document.getElementById("godownDelivery").disabled = true;
+            document.getElementById("localDelivery").disabled = true;
+
+            // Display additional inputs and call updateTbbLocation
+            additionalInputs.style.display = 'block';
+            updateTbbLocation();
+        } else {
+            // Re-enable options if "Full Load" is deselected
+            directCollection.disabled = false;
+            directDelivery.disabled = false;
+            document.getElementById("localCollection").disabled = false;
+            document.getElementById("godownCollection").disabled = false;
+            document.getElementById("godownDelivery").disabled = false;
+            document.getElementById("localDelivery").disabled = false;
+
+            // Hide additional inputs
+            additionalInputs.style.display = 'none';
+        }
+    }
+
+    // Attach event listeners to radio buttons in the "collection_option" group
+    const radios = document.querySelectorAll('input[name="collection_option"]');
+    radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            const additionalInputs = document.getElementById("additionalInputs");
+
+            // Display additional inputs if "LCM" or "GDM" is selected
+            if (radio.value === "LCM" || radio.value === "GDM") {
+                additionalInputs.style.display = 'block';
+
+                updateTbbLocation()
+            } else {
+                additionalInputs.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+
+<script>
+
+    let rowCount = 1;
+
+// Function to update totals
+function updateTotals() {
+    let totalPkgs = 0;
+    let totalActualWeight = 0;
+    let totalPaidWeight = 0;
+
+    // Loop through rows and sum up the values
+    document.querySelectorAll('#productTableBody tr').forEach(row => {
+        const pkg = parseFloat(row.querySelector('input[name="pieces[]"]').value) || 0;
+        const actualWeight = parseFloat(row.querySelector('input[name="actualweight[]"]').value) || 0;
+        const paidWeight = parseFloat(row.querySelector('input[name="paidweight[]"]').value) || 0;
+
+        totalPkgs += pkg;
+        totalActualWeight += actualWeight;
+        totalPaidWeight += paidWeight;
+    });
+
+    // Update the totals in the UI
+    document.getElementById('totalPkgs').textContent = totalPkgs.toFixed(2);
+    document.getElementById('totalActualWeight').textContent = totalActualWeight.toFixed(2);
+    document.getElementById('totalPaidWeight').textContent = totalPaidWeight.toFixed(2);
+
+    // Update the actual weight and paid weight input fields
+    document.getElementById('actualweightvalue').value = totalActualWeight.toFixed(2);
+    document.getElementById('paidweightvalue').value = totalPaidWeight.toFixed(2);
+    calculateFreight();
+}
+
+
+// Add row on button click
+document.getElementById('addRowBtn').addEventListener('click', function () {
+rowCount++;
+
+// Create a new row
+const row = document.createElement('tr');
+row.innerHTML = `
+    <td>${rowCount}</td> <!-- Serial Number -->
+            <td><input type="number" name="pieces[]" class="small-input" oninput="calculatePkgCharge()"></td>
+        <td><input type="text" name="product[]" oninput="calculatePkgCharge()"></td>
+
+    <td><input type="text" name="desc[]"></td>
+    <td><input type="text" name="actualweight[]" class="small-input"></td>
+    <td><input type="text" name="paidweight[]" class="small-input"></td>
+`;
+
+// Append the row to the table
+document.getElementById('productTableBody').appendChild(row);
+
+// Add event listeners to new inputs for recalculating totals
+row.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', updateTotals);
+});
+
+// Update totals after adding the row
+updateTotals();
+});
+
+// Add event listeners to existing inputs for recalculating totals
+document.querySelectorAll('#productTableBody input').forEach(input => {
+input.addEventListener('input', updateTotals);
+});
+
+// Initial totals calculation
+updateTotals();
+
+    function showConsignorDatalist() {
+        const input = document.getElementById('senderName');
+        const datalist = document.getElementById('consignor_name');
+
+        if (input.value.length >= 2) {
+            fetch(`/get_consignor_name?query=${encodeURIComponent(input.value)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Fetched data:', data); // Debugging: Check the data in the console
+                    datalist.innerHTML = ''; // Clear previous options
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(number => {
+                            const option = document.createElement('option');
+                            option.value = number;
+                            datalist.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = 'No results';
+                        datalist.appendChild(option);
+                    }
+                })
+                .catch(error => console.error('Error fetching vehicle numbers:', error));
+        } else {
+            datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+        }
+    }
+// Function to fetch sender details and then fetch sender pickup
+function fetchSenderDetails() {
+    const senderName = document.getElementById('senderName').value;
+
+    if (senderName) {
+        fetch(`/get_sender_details?name=${encodeURIComponent(senderName)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched sender details:', data); // Debugging: Check the data in the console
+
+                // Populate the form fields with the fetched data
+                document.getElementById('senderID').value = data.sender_id || '';
+                document.getElementById('senderFOC').value = data.sender_foc || '';
+                document.getElementById('senderMobile').value = data.sender_mobile || '';
+                document.getElementById('sendergst').value = data.sender_GST || '';
+                document.getElementById('senderEmail').value = data.sender_email || '';
+                document.getElementById('senderAddress').value = data.sender_address || '';
+                document.getElementById('tbb').value = data.sender_tbb || ''; // Update TBB for the sender
+
+                // After populating the form, call fetchSenderPickup with the sender ID
+                fetchSenderPickup(data.sender_id);
+            })
+            .catch(error => console.error('Error fetching sender details:', error));
+    }
+}
+
+// Function to fetch sender pickup locations based on the sender ID
+function fetchSenderPickup(senderID) {
+    if (senderID) {
+        console.log(`Fetching sender pickup for ID: ${senderID}`); // Debugging log
+
+        fetch(`/get_sender_pickup?id=${encodeURIComponent(senderID)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    // Make sure the location element exists
+                    const locationSelect = document.getElementById('location');
+                    if (!locationSelect) {
+                        console.error("Element with ID 'location' not found");
+                        return; // Exit if the element doesn't exist
+                    }
+
+                    locationSelect.innerHTML = ''; // Clear previous options
+
+                    const locations = data.sender_pickup ? data.sender_pickup.split(',') : [];
+                    locations.forEach(location => {
+                        const option = document.createElement('option');
+                        option.value = location.trim();
+                        option.textContent = location.trim();
+                        locationSelect.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching sender pickup:', error);
+                alert('An error occurred. Please try again.');
+            });
+    } else {
+        alert('Sender ID is required to fetch pickup locations.');
+    }
+}
+
+// Bind fetchSenderPickup function to radio button change events
+document.getElementById('localCollection').addEventListener('change', function() {
+    const senderID = document.getElementById('senderID').value;
+    fetchSenderPickup(senderID);
+});
+
+document.getElementById('directCollection').addEventListener('change', function() {
+    const senderID = document.getElementById('senderID').value;
+    fetchSenderPickup(senderID);
+});
+
+
+// Add event listener to update location field when collection option changes
+document.querySelectorAll('input[name="collection_option"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+        fetchSenderDetails(); // Re-fetch and update the location field
+    });
+});
+
+</script>
+<script>
+    function calculateFreight() {
+    // Get input values
+    let weightAmt = parseFloat(document.getElementById("rate").value) || 0; // Rate Per KG (dynamically displayed)
+    let weight = parseFloat(document.getElementById("paidweightvalue").value) || 0; // Paid weight
+
+    // Calculate Freight
+    let freight = weightAmt * weight;
+
+    // Apply minimum freight if applicable
+    if (freight < 50 && (weightAmt > 0 || weight > 0)) {
+        freight = 50; // Minimum freight
+    }
+
+    // Update freight field
+    document.getElementById("freight").value = freight.toFixed(2);
+
+    // Optionally, trigger Hamali calculation
+    calculateHamali(weight);
+}
+function calculateHamali(weight) {
+    let hamaliCharge = weight * 0.3;
+    if (hamaliCharge < 50 && weight > 0) {
+        hamaliCharge = 50; // Minimum hamali charge
+    }
+    document.getElementById("hamali").value = hamaliCharge.toFixed(2);
+    calculateTotalCost();
+}
+
+// Add Event Listeners for Dynamic Updates
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("weightAmt").addEventListener("input", calculateFreight);
+    document.getElementById("paidweightvalue").addEventListener("input", calculateFreight);
+});
+function calculateTotalCost() {
+    let freight = parseFloat(document.getElementById("freight").value) || 0;
+    let hamali = parseFloat(document.getElementById("hamali").value) || 0;
+    let doorCharge = parseFloat(document.getElementById("delivery_charge").value) || 0;
+    let collectionCharge = parseFloat(document.getElementById("collection_charge").value) || 0;
+    let stCharge = parseFloat(document.getElementById("st_charge").value) || 0;
+    let deduction = parseFloat(document.getElementById("deduction").value) || 0;
+    let codCharge = parseFloat(document.getElementById("cod").value) || 0;
+    let fovCharge = parseFloat(document.getElementById("fovcharge").value) || 0;
+    let pkgCharge = parseFloat(document.getElementById("pkgcharge").value) || 0;
+    let gstCharge = parseFloat(document.getElementById("gstCharge").value) || 0;
+    let balance = parseFloat(document.getElementById("balance").value) || 0;
+
+    // Check if COD is applicable
+    let isCODApplicable = document.getElementById("codapplicable").checked;
+
+    // Include COD charge only if applicable
+    let totalCost = freight + hamali + doorCharge + collectionCharge + stCharge +
+        deduction + (isCODApplicable ? codCharge : 0) + fovCharge + pkgCharge +
+        gstCharge + balance;
+
+    // Update total field
+    document.getElementById("total").value = totalCost.toFixed(2);
+}
+
+
+    function observeDynamicUpdates() {
+        const weightAmtElement = document.getElementById("weightAmt");
+        const paidWeightElement = document.getElementById("paidweightvalue");
+
+        const observerCallback = () => {
+            calculateFreight(); // Recalculate when value changes dynamically
+        };
+
+        const observer = new MutationObserver(observerCallback);
+
+        // Observe value changes in both inputs
+        observer.observe(weightAmtElement, { attributes: true, attributeFilter: ["value"] });
+        observer.observe(paidWeightElement, { attributes: true, attributeFilter: ["value"] });
+    }
+
+    function addEventListeners() {
+        // Trigger calculations when user manually inputs values
+        document.getElementById("paidweightvalue").addEventListener("input", calculateFreight);
+        document.getElementById("weightAmt").addEventListener("input", calculateFreight);
+
+        // Recalculate total when any cost field is updated
+        ["freight", "hamali"].forEach(id => {
+            document.getElementById(id).addEventListener("input", calculateTotalCost);
+        });
+
+        ["delivery_charge", "collection_charge", "st_charge", "deduction", "cod", "fovcharge", "pkgcharge", "gstCharge", "balance"]
+            .forEach(id => {
+                document.getElementById(id).addEventListener("input", calculateTotalCost);
+            });
+    }
+
+    // Initialize observation and event listeners when DOM is ready
+    document.addEventListener("DOMContentLoaded", () => {
+        observeDynamicUpdates();
+        addEventListeners();
+    });
+
+</script>
+</div>
+<!--   Core JS Files   -->
+<script src="{% static 'assets/js/core/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'assets/js/core/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
+
+<!-- jQuery Scrollbar -->
+<script src="{% static 'assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
+<!-- Datatables -->
+<script src="{% static 'assets/js/plugin/datatables/datatables.min.js' %}"></script>
+<!-- Kaiadmin JS -->
+<script src="{% static 'assets/js/kaiadmin.min.js' %}"></script>
+<!-- Kaiadmin DEMO methods, don't include it in your project! -->
+<script src="{% static 'assets/js/setting-demo2.js' %}"></script>
+
+</body>
+</html>

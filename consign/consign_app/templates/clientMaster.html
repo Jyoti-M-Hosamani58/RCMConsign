@@ -1,0 +1,286 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>Ratan Cargo Movers</title>
+    <meta
+            content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+            name="viewport"
+    />
+    <link
+            rel="icon"
+            href="{% static 'assets/img/kaiadmin/favicon.ico' %}"
+            type="image/x-icon"
+    />
+    <style>
+        .required-asterisk {
+            color: red;
+            float: right;
+            display: block;
+            margin-bottom: 0; /* Add some spacing between the asterisk and the input field */
+        }
+    </style>
+    <!-- Fonts and icons -->
+    <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
+    <script>
+        WebFont.load({
+          google: { families: ["Public Sans:300,400,500,600,700"] },
+          custom: {
+            families: [
+              "Font Awesome 5 Solid",
+              "Font Awesome 5 Regular",
+              "Font Awesome 5 Brands",
+              "simple-line-icons",
+            ],
+            urls: ["{% static 'assets/css/fonts.min.css' %}"],
+          },
+          active: function () {
+            sessionStorage.fonts = true;
+          },
+        });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/plugins.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/kaiadmin.min.css' %}"/>
+
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link rel="stylesheet" href="{% static 'assets/css/demo.css' %}"/>
+</head>
+<body>
+<!-- End Sidebar -->
+{% include 'index_menu.html' %}
+<!-- End Navbar -->
+</div><br/> <br/> <br/> <br/>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="container">
+        <div class="page-inner">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Client information</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- Consignee Name and Mobile in one row -->
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <span class="required-asterisk">*</span>
+                                        <!-- Red asterisk above the input field -->
+
+                                        <input type="text" id="name" name="name"
+                                               placeholder="Client Name" required
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <span class="required-asterisk">*</span>
+
+                                        <input type="tel" id="mobile" pattern="[0-9]{10}" maxlength="10"
+                                               name="mobile" placeholder="Client Mobile"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <span class="required-asterisk">*</span>
+                                        <input type="tel" id="telephone" pattern="[0-9]{12}" maxlength="12"
+                                               name="telephone" placeholder="Client Telephone"
+                                               class="form-control">
+                                    </div>
+                                </div>
+
+                                <script>
+    // Get references to the input fields
+    const mobileField = document.getElementById('mobile');
+    const telephoneField = document.getElementById('telephone');
+
+    // Function to toggle the required attribute based on input
+    function toggleRequiredFields() {
+        // If the mobile field has a value, telephone is not required
+        if (mobileField.value.trim() !== '') {
+            telephoneField.required = false;
+        } else {
+            telephoneField.required = true; // Otherwise, make telephone required
+        }
+
+        // If the telephone field has a value, mobile is not required
+        if (telephoneField.value.trim() !== '') {
+            mobileField.required = false;
+        } else {
+            mobileField.required = true; // Otherwise, make mobile required
+        }
+    }
+
+    // Add event listeners for input changes on both fields
+    mobileField.addEventListener('input', toggleRequiredFields);
+    telephoneField.addEventListener('input', toggleRequiredFields);
+
+    // Ensure the fields' required state is set correctly when the page loads
+    toggleRequiredFields();
+</script>
+
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <input type="email" id="email" name="email"
+                                               placeholder="Client Email" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <span class="required-asterisk">*</span>
+                                        <textarea type="text" id="address" name="address" required
+                                                  placeholder="Client Address"
+                                                  class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <input type="text" id="city" name="city"
+                                               placeholder="Client City" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <span class="required-asterisk">*</span>
+                                        <input type="text" id="pincode" required name="pincode"
+                                               placeholder="Client Pincode" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <span class="required-asterisk">*</span>
+                                        <input type="text" id="GST" name="GST" maxlength="15"
+                                               placeholder="Client GST" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <!-- Consignee Pickup and TBB in one row -->
+
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <span class="required-asterisk">*</span>
+                                        <select id="clientType" name="clientType" class="form-control">
+                                            <option value=""> -- Select --</option>
+                                            <option value="WalkIn"> WalkIn</option>
+                                            <option value="Corporate"> Corporate</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-4" id="tbbContainer" style="display: none;">
+                                    <div class="form-group">
+                                        <input type="text" id="tbb" name="tbb" placeholder="Client TBB"
+                                               class="form-control">
+                                    </div>
+                                </div>
+
+                                <script>
+                                    document.getElementById('clientType').addEventListener('change', function () {
+                                        const tbbContainer = document.getElementById('tbbContainer');
+                                        if (this.value === 'Corporate') {
+                                            tbbContainer.style.display = 'block';
+                                        } else {
+                                            tbbContainer.style.display = 'none';
+                                        }
+                                    });
+                                </script>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <label for="receiverfoc">FOC (Free of Charge):</label>
+                                        <input type="checkbox" id="receiverfoc" name="receiverfoc" value="Yes">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <label for="thirdParty">Third Party Applicable:</label>
+                                        <input type="checkbox" id="thirdParty" name="thirdParty" value="Yes">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <input type="text" id="receiverPickup" name="pickup[]"
+                                               placeholder="Client Pickup" class="form-control">
+                                    </div>
+
+                                    <div id="receiverPickupContainer"></div>
+                                    <!-- Container to hold additional input fields -->
+                                    <button type="button" id="addReceiverPickupBtn" class="btn btn-primary">Add Pickup
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-action">
+                            <button class="btn btn-success">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</form>
+
+<!-- End Custom template -->
+</div>
+<script>
+    document.getElementById('addReceiverPickupBtn').addEventListener('click', function() {
+    // Create new input field
+    const newInputDiv = document.createElement('div');
+    newInputDiv.classList.add('form-group');
+    newInputDiv.innerHTML = `
+        <input type="text" name="pickup[]" placeholder="Client Pickup" class="form-control">
+    `;
+    document.getElementById('receiverPickupContainer').appendChild(newInputDiv);
+});
+
+</script>
+<!--   Core JS Files   -->
+<script src="{% static 'assets/js/core/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'assets/js/core/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
+
+<!-- jQuery Scrollbar -->
+<script src="{% static 'assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
+
+<!-- Chart JS -->
+<script src="{% static 'assets/js/plugin/chart.js/chart.min.js' %}"></script>
+
+<!-- jQuery Sparkline -->
+<script src="{% static 'assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js' %}"></script>
+
+<!-- Chart Circle -->
+<script src="{% static 'assets/js/plugin/chart-circle/circles.min.js' %}"></script>
+
+<!-- Datatables -->
+<script src="{% static 'assets/js/plugin/datatables/datatables.min.js' %}"></script>
+
+<!-- Bootstrap Notify -->
+<script src="{% static 'assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js' %}"></script>
+
+<!-- jQuery Vector Maps -->
+<script src="{% static 'assets/js/plugin/jsvectormap/jsvectormap.min.js' %}"></script>
+<script src="{% static 'assets/js/plugin/jsvectormap/world.js' %}"></script>
+
+<!-- Google Maps Plugin -->
+<script src="{% static 'assets/js/plugin/gmaps/gmaps.js' %}"></script>
+
+<!-- Sweet Alert -->
+<script src="{% static 'assets/js/plugin/sweetalert/sweetalert.min.js' %}"></script>
+
+<!-- Kaiadmin JS -->
+<script src="{% static 'assets/js/kaiadmin.min.js' %}"></script>
+
+<!-- Kaiadmin DEMO methods, don't include it in your project! -->
+<script src="{% static 'assets/js/setting-demo2.js' %}"></script>
+</body>
+</html>
